@@ -10,6 +10,7 @@ public class ClockHand : MonoBehaviour
     public float timerLength = 2;
     public float t;
 
+
     // Update is called once per frame
     void Update()
     {
