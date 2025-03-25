@@ -1,5 +1,7 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Knight : MonoBehaviour
@@ -8,10 +10,13 @@ public class Knight : MonoBehaviour
     Animator animator;
     SpriteRenderer sr;
     public bool canRun = true;
+    public AudioSource Step;
+    public bool AudioStep = false;
     void Start()
     {
         animator = GetComponent<Animator>();
         sr = GetComponent<SpriteRenderer>();
+        Step = GetComponent<AudioSource>();
     }
 
     
@@ -38,5 +43,9 @@ public class Knight : MonoBehaviour
     public void AttackHasFinished()
     {
         canRun = true;
+    }
+    public void Footsteps()
+    {
+        Step.Play();
     }
 }
