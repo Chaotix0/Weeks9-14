@@ -5,15 +5,14 @@ using UnityEngine;
 public class Goalie : MonoBehaviour
 {
     public float speed = 3; //Goalie speed
-    public float maxXPosition = 2f; // Right boundary
-    public float minXPosition = -2f; // Left boundary
+    public float maxXPosition = 2; // Right boundary
+    public float minXPosition = -2; // Left boundary
+
     Animator animator;
-    SpriteRenderer sr;
     // Start is called before the first frame update
     void Start()
     {
-        //animator = GetComponent<Animator>();
-        //sr = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -22,17 +21,23 @@ public class Goalie : MonoBehaviour
         Vector2 pos = transform.position;
 
         pos.x += Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+        pos.x = Mathf.Clamp(pos.x, minXPosition, maxXPosition);
+        
 
         transform.position = pos;
 
-        //if (Input.GetKeyDown(KeyCode.LeftArrow))
-        //{
-        //    transform.Translate(-1, 0, 0);
-        //}
-
-        //if (Input.GetKeyDown(KeyCode.RightArrow))
-        //{
-        //    transform.Translate(1, 0, 0);
-        //}
+        //animations for the differrent blocks
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            animator.SetTrigger("Glove");
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            animator.SetTrigger("Butterfly");
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            animator.SetTrigger("Blocker");
+        }
     }
 }
