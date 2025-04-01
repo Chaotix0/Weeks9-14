@@ -20,7 +20,9 @@ public class Goalie : MonoBehaviour
     {
         Vector2 pos = transform.position;
 
+        //movement code arrows for movement
         pos.x += Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+        //clamp for staying in the crease
         pos.x = Mathf.Clamp(pos.x, minXPosition, maxXPosition);
         
 
