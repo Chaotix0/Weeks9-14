@@ -1,3 +1,4 @@
+using Cinemachine;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ public class Knight : MonoBehaviour
     public bool canRun = true;
     public AudioSource Step;
     public bool AudioStep = false;
+
+    //Cinemachine stuff
+    public CinemachineImpulseSource impulseSource;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -47,5 +51,6 @@ public class Knight : MonoBehaviour
     public void Footsteps()
     {
         Step.Play();
+        impulseSource.GenerateImpulse();
     }
 }
