@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Puck : MonoBehaviour
 {
-    public float speed = 7; // puck speed
     public float maxXPosition = 2; // Right boundary
     public float minXPosition = -2; // Left boundary
     public float maxYPosition = 0; // Right boundary
@@ -14,13 +13,12 @@ public class Puck : MonoBehaviour
     float t;
     public float XValue;
     public float YValue;
-    public int net = 0;
     public GameObject goalie;
     public GameObject puck;
     // Start is called before the first frame update
     void Start()
     {
-        
+        //StartCoroutine(Save());
     }
 
     // Update is called once per frame
@@ -32,11 +30,22 @@ public class Puck : MonoBehaviour
         transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
         PuckSpawn(); //spawns puck eqach frame
     }
+
+    //IEnumerator Save()
+    //{
+    //    while () 
+    //    {
+    //
+    //    }
+    //}
+
     void PuckSpawn()
     {
-        if (transform.localScale.x <= 0)
+        if (transform.localScale.x <= 0.001f)
         {
-            Instantiate(puck);
+            transform.position = new Vector3(XValue, YValue); //random puck spots
+
+            Instantiate(puck); //makes duplicate puck
             Destroy(gameObject); // Detroys puck when done
         }
 
