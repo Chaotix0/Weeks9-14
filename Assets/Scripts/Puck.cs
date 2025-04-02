@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Puck : MonoBehaviour
 {
@@ -14,40 +15,42 @@ public class Puck : MonoBehaviour
     public float XValue;
     public float YValue;
     public GameObject goalie;
+    public GameObject spawner;
     public GameObject puck;
+    public GameObject score;
+    UnityEvent save; // adding to the score when save the puck
     // Start is called before the first frame update
     void Start()
     {
         //StartCoroutine(Save());
+        XValue = Random.Range(minXPosition, maxXPosition); //random X value
+        YValue = Random.Range(minYPosition, maxYPosition); //random Y value
+
+        transform.position = new Vector3(XValue, YValue); //random puck spots
+
+        save = new UnityEvent();
+        save.AddListener(score.GetComponent<Score>().save);
     }
 
     // Update is called once per frame
     void Update()
     {
         t += Time.deltaTime;
-        XValue = Random.Range(minXPosition, maxXPosition); //random X value
-        YValue = Random.Range(minYPosition, maxYPosition); //random Y value
         transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
-        PuckSpawn(); //spawns puck eqach frame
+        PuckEnd(); //spawns puck eqach frame
     }
 
-    //IEnumerator Save()
-    //{
-    //    while () 
-    //    {
-    //
-    //    }
-    //}
-
-    void PuckSpawn()
+    void PuckEnd()
     {
         if (transform.localScale.x <= 0.001f)
         {
-            transform.position = new Vector3(XValue, YValue); //random puck spots
-
-            Instantiate(puck); //makes duplicate puck
+            if (goalie.transform.position.x >= puck.transform.position.x - 1 && goalie.transform.position.x <= puck.transform.position.x + 1)
+            {
+                Instantiate(puck); //makes duplicate puck
+                save.Invoke();
+            }
             Destroy(gameObject); // Detroys puck when done
-        }
 
+        }
     }
 }
