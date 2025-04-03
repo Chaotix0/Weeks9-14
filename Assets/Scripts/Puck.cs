@@ -48,7 +48,7 @@ public class Puck : MonoBehaviour
             if (goalie.transform.position.x >= puck.transform.position.x - 1.2f && goalie.transform.position.x <= puck.transform.position.x + 1.2f)
             {
                 Instantiate(puck); //makes duplicate puck
-                    SAVE.Invoke();
+                SAVE.Invoke();
             }
             Destroy(gameObject); // Detroys puck when done
 
