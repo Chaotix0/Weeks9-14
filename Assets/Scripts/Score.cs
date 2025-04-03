@@ -8,8 +8,8 @@ using UnityEngine.Events;
 
 public class Score : MonoBehaviour
 {
-    float score = 0;
-    TextMeshPro ScoreText;
+    public float score = 0;
+    public TMP_Text ScoreText;
     // Start is called before the first frame update
     void Start()
     {

@@ -770,6 +770,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cdae423e1ee6eb469c6ad79d50d9024, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  score: 0
+  ScoreText: {fileID: 1912820559}
 --- !u!114 &1912820559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -913,6 +915,9 @@ MonoBehaviour:
   spawner: {fileID: 1415786335}
   puck: {fileID: 2628898330577136086}
   score: {fileID: 1912820556}
+  SAVE:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2628898330577136086
 GameObject:
   m_ObjectHideFlags: 0

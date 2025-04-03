@@ -18,7 +18,7 @@ public class Puck : MonoBehaviour
     public GameObject spawner;
     public GameObject puck;
     public GameObject score;
-    UnityEvent save; // adding to the score when save the puck
+    public UnityEvent SAVE; // adding to the score when save the puck
     // Start is called before the first frame update
     void Start()
     {
@@ -27,9 +27,10 @@ public class Puck : MonoBehaviour
         YValue = Random.Range(minYPosition, maxYPosition); //random Y value
 
         transform.position = new Vector3(XValue, YValue); //random puck spots
+        
+        SAVE = new UnityEvent();
+        SAVE.AddListener(score.GetComponent<Score>().save);
 
-        save = new UnityEvent();
-        save.AddListener(score.GetComponent<Score>().save);
     }
 
     // Update is called once per frame
@@ -44,10 +45,10 @@ public class Puck : MonoBehaviour
     {
         if (transform.localScale.x <= 0.001f)
         {
-            if (goalie.transform.position.x >= puck.transform.position.x - 1 && goalie.transform.position.x <= puck.transform.position.x + 1)
+            if (goalie.transform.position.x >= puck.transform.position.x - 1.2f && goalie.transform.position.x <= puck.transform.position.x + 1.2f)
             {
                 Instantiate(puck); //makes duplicate puck
-                save.Invoke();
+                    SAVE.Invoke();
             }
             Destroy(gameObject); // Detroys puck when done
 
