@@ -15,7 +15,6 @@ public class Puck : MonoBehaviour
     public float XValue;
     public float YValue;
     public GameObject goalie;
-    public GameObject spawner;
     public GameObject puck;
     public GameObject score;
     public UnityEvent SAVE; // adding to the score when save the puck
@@ -36,7 +35,7 @@ public class Puck : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        t += Time.deltaTime;
+        t += Time.deltaTime; //makes sure the puck scales every frame evenly
         transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
         PuckEnd(); //spawns puck eqach frame
     }
@@ -45,7 +44,7 @@ public class Puck : MonoBehaviour
     {
         if (transform.localScale.x <= 0.001f)
         {
-            if (goalie.transform.position.x >= puck.transform.position.x - 1.2f && goalie.transform.position.x <= puck.transform.position.x + 1.2f)
+            if (goalie.transform.position.x >= puck.transform.position.x - 1.2f && goalie.transform.position.x <= puck.transform.position.x + 1.2f)// checking hitboxes for goalie
             {
                 Instantiate(puck); //makes duplicate puck
                 SAVE.Invoke();
