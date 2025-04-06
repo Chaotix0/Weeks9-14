@@ -18,6 +18,7 @@ public class Puck : MonoBehaviour
     public GameObject goalie;
     public GameObject puck;
     public GameObject score;
+    public GameObject TextControls;
     public GameObject CrazyPuck;
     public UnityEvent SAVE; // adding to the score when save the puck
     // Start is called before the first frame update
@@ -30,13 +31,14 @@ public class Puck : MonoBehaviour
         
         SAVE = new UnityEvent();
         SAVE.AddListener(score.GetComponent<Score>().save);
+        SAVE.AddListener(TextControls.GetComponent<Controls>().save);
         num = Random.Range(0, 11);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (num != 10) //call normal puck
+        if (num != 10) //call Crazy puck
         {
             t += Time.deltaTime; //makes sure the puck scales every frame evenly
             transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
@@ -63,6 +65,10 @@ public class Puck : MonoBehaviour
                 {
                     Instantiate(puck); //makes duplicate puck
                     SAVE.Invoke();
+                }
+                else 
+                {
+                    SAVE.RemoveListener(score.GetComponent<Score>().save);
                 }
             }
             Destroy(gameObject); // Detroys puck when done
