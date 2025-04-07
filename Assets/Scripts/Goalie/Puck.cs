@@ -20,7 +20,6 @@ public class Puck : MonoBehaviour
     public GameObject puck;
     public GameObject score;
     public GameObject TextControls;
-    public GameObject CrazyPuck;
     public IEnumerator CRAZY;
     public UnityEvent SAVE; // adding to the score when save the puck
     // Start is called before the first frame update
@@ -49,7 +48,6 @@ public class Puck : MonoBehaviour
         if (num == 10) // call Crazy puck
         {
             StartCoroutine(Crazy()); //start CrazyPuck
-            Debug.Log("Coroutine is started");
 
             t += Time.deltaTime; //makes sure the puck scales every frame evenly
         }
@@ -64,7 +62,6 @@ public class Puck : MonoBehaviour
             if (transform.localScale.x <= 0.001f)
             {
                 PuckEnd(); //spawns new puck
-                Debug.Log("Crazy activated");
             }
             yield return null;
         }
