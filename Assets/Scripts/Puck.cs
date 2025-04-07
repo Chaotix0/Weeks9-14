@@ -11,7 +11,8 @@ public class Puck : MonoBehaviour
     public float maxYPosition = 0; // Right boundary
     public float minYPosition = -2; // Left boundary
     public AnimationCurve size; //puck size
-    public int num = 0;
+    public AnimationCurve crazy; //CrazyPuck movement
+    public int num = 0; //random value for crazy puck
     float t;
     public float XValue;
     public float YValue;
@@ -20,6 +21,7 @@ public class Puck : MonoBehaviour
     public GameObject score;
     public GameObject TextControls;
     public GameObject CrazyPuck;
+    public IEnumerator CRAZY;
     public UnityEvent SAVE; // adding to the score when save the puck
     // Start is called before the first frame update
     void Start()
@@ -46,13 +48,26 @@ public class Puck : MonoBehaviour
         }
         if (num == 10) // call Crazy puck
         {
-            StartCoroutine(CrazyPuck.GetComponent<Puck2>().Crazy()); //start CrazyPuck
+            StartCoroutine(Crazy()); //start CrazyPuck
+            Debug.Log("Coroutine is started");
 
             t += Time.deltaTime; //makes sure the puck scales every frame evenly
-            transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
-            PuckEnd(); //spawns puck eqach frame
         }
-        
+    }
+
+    public IEnumerator Crazy()
+    {
+        while (num == 10)
+        {
+            transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
+            transform.position = Vector3.Lerp(new Vector3(XValue - 1, YValue), new Vector3(XValue, YValue), crazy.Evaluate(t)); //Crazy puck movement
+            if (transform.localScale.x <= 0.001f)
+            {
+                PuckEnd(); //spawns new puck
+                Debug.Log("Crazy activated");
+            }
+            yield return null;
+        }
     }
 
     void PuckEnd()
