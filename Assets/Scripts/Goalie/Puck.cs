@@ -34,28 +34,28 @@ public class Puck : MonoBehaviour
         SAVE.AddListener(score.GetComponent<Score>().save);
         SAVE.AddListener(TextControls.GetComponent<Controls>().save);
         num = Random.Range(0, 11);
+        Debug.Log(num);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (num != 10) //call Crazy puck
+        t += Time.deltaTime; //makes sure the puck scales every frame evenly
+        if (num < 10) //call puck
         {
-            t += Time.deltaTime; //makes sure the puck scales every frame evenly
             transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
             PuckEnd(); //spawns puck eqach frame
         }
         if (num == 10) // call Crazy puck
         {
             StartCoroutine(Crazy()); //start CrazyPuck
-
-            t += Time.deltaTime; //makes sure the puck scales every frame evenly
+            num = 11; //set number to 11 to stop it from starting a million coroutines
         }
     }
 
     public IEnumerator Crazy()
     {
-        while (num == 10)
+        while (num >= 10)
         {
             transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
             transform.position = Vector3.Lerp(new Vector3(XValue - 1, YValue), new Vector3(XValue, YValue), crazy.Evaluate(t)); //Crazy puck movement
