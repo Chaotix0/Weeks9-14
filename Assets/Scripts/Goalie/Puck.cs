@@ -34,7 +34,6 @@ public class Puck : MonoBehaviour
         SAVE.AddListener(score.GetComponent<Score>().save);
         SAVE.AddListener(TextControls.GetComponent<Controls>().save);
         num = Random.Range(0, 11);
-        Debug.Log(num);
     }
 
     // Update is called once per frame
