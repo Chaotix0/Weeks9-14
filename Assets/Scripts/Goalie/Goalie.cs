@@ -18,16 +18,26 @@ public class Goalie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        HandleMovement();
+        HandleSaves();
+    }
+
+    private void HandleMovement()
+    {
         Vector2 pos = transform.position;
 
         //movement code arrows for movement
         pos.x += Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
         //clamp for staying in the crease
         pos.x = Mathf.Clamp(pos.x, minXPosition, maxXPosition);
-        
+
 
         transform.position = pos;
+    }
 
+    private void HandleSaves()
+    {
         //animations for the differrent blocks
         if (Input.GetKeyDown(KeyCode.A))
         {
