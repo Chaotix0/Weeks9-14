@@ -1,89 +1,125 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Puck : MonoBehaviour
 {
-    public float maxXPosition = 2; // Right boundary
-    public float minXPosition = -2; // Left boundary
-    public float maxYPosition = 0; // Right boundary
-    public float minYPosition = -2; // Left boundary
-    public AnimationCurve size; //puck size
-    public AnimationCurve crazy; //CrazyPuck movement
-    public int num = 0; //random value for crazy puck
-    float t;
-    public float XValue;
-    public float YValue;
+    [Header("Spawn Boundaries")]
+    public float maxXPosition = 2f;
+    public float minXPosition = -2f;
+    public float maxYPosition = 0f;
+    public float minYPosition = -2f;
+
+    [Header("Animation Curves")]
+    public AnimationCurve size;   // Scales down to mimic flying toward the net
+    public AnimationCurve crazy;  // Handles the erratic zig-zag movement
+
+    [Header("References")]
     public GameObject goalie;
-    public GameObject puck;
+    public GameObject puckPrefab; // Rename 'puck' to 'puckPrefab' to avoid self-reference confusion
     public GameObject score;
-    public GameObject TextControls;
-    public IEnumerator CRAZY;
-    public UnityEvent SAVE; // adding to the score when save the puck
-    // Start is called before the first frame update
+    public GameObject textControls;
+
+    private int puckTypeChance = 0;
+    private float timeElapsed;
+    private float targetX;
+    private float targetY;
+
+    // Making this static or assigning it directly is safer, but keeping your UnityEvent workflow:
+    private UnityEvent onSave;
+
     void Start()
     {
-        XValue = Random.Range(minXPosition, maxXPosition); //random X value
-        YValue = Random.Range(minYPosition, maxYPosition); //random Y value
+        // 1. Pick a random target spot in the net
+        targetX = Random.Range(minXPosition, maxXPosition);
+        targetY = Random.Range(minYPosition, maxYPosition);
 
-        transform.position = new Vector3(XValue, YValue); //random puck spots
-        
-        SAVE = new UnityEvent();
-        SAVE.AddListener(score.GetComponent<Score>().save);
-        SAVE.AddListener(TextControls.GetComponent<Controls>().save);
-        num = Random.Range(0, 11);
+        // Start the puck at its baseline position (optionally, you can start it at full scale)
+        transform.position = new Vector3(targetX, targetY, 0);
+
+        // 2. Set up scoring events
+        onSave = new UnityEvent();
+        if (score != null) onSave.AddListener(score.GetComponent<Score>().save);
+        if (textControls != null) onSave.AddListener(textControls.GetComponent<Controls>().save);
+
+        // 3. Roll the dice: 10% chance to be a Crazy Puck
+        puckTypeChance = Random.Range(0, 11);
+
+        if (puckTypeChance == 10)
+        {
+            StartCoroutine(CrazyPuckRoutine());
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        t += Time.deltaTime; //makes sure the puck scales every frame evenly
-        if (num < 10) //call puck
+        // Only run standard movement if it's a regular puck
+        if (puckTypeChance < 10)
         {
-            transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
-            PuckEnd(); //spawns puck eqach frame
-        }
-        if (num == 10) // call Crazy puck
-        {
-            StartCoroutine(Crazy()); //start CrazyPuck
-            num = 11; //set number to 11 to stop it from starting a million coroutines
+            timeElapsed += Time.deltaTime;
+            transform.localScale = Vector3.one * size.Evaluate(timeElapsed);
+
+            CheckPuckArrival();
         }
     }
 
-    public IEnumerator Crazy()
+    public IEnumerator CrazyPuckRoutine()
     {
-        while (num >= 10)
+        // Loop runs until the puck shrinks away
+        while (transform.localScale.x > 0.001f)
         {
-            transform.localScale = Vector2.one * size.Evaluate(t); //scales down puck size
-            transform.position = Vector3.Lerp(new Vector3(XValue - 1, YValue), new Vector3(XValue, YValue), crazy.Evaluate(t)); //Crazy puck movement
-            if (transform.localScale.x <= 0.001f)
-            {
-                PuckEnd(); //spawns new puck
-            }
+            timeElapsed += Time.deltaTime;
+            transform.localScale = Vector3.one * size.Evaluate(timeElapsed);
+
+            // Zig-zag Lerp calculation based on your original math
+            float crunchX = Mathf.Lerp(targetX - 1f, targetX, crazy.Evaluate(timeElapsed));
+            transform.position = new Vector3(crunchX, targetY, 0);
+
             yield return null;
         }
+
+        // Once the loop naturally finishes out, process the end of the shot
+        ProcessShotResult();
     }
 
-    void PuckEnd()
+    void CheckPuckArrival()
     {
         if (transform.localScale.x <= 0.001f)
         {
-            if (goalie.transform.position.x >= puck.transform.position.x - 1.2f && goalie.transform.position.x <= puck.transform.position.x + 1.2f)// checking x hitboxes for goalie
-            {
-                if (goalie.transform.position.y >= puck.transform.position.y - 1 && goalie.transform.position.y <= puck.transform.position.y + 1)// checking y hitboxes for goalie
-                {
-                    Instantiate(puck); //makes duplicate puck
-                    SAVE.Invoke();
-                }
-                else 
-                {
-                    SAVE.RemoveListener(score.GetComponent<Score>().save);
-                }
-            }
-            Destroy(gameObject); // Detroys puck when done
-
+            ProcessShotResult();
         }
+    }
+
+    void ProcessShotResult()
+    {
+        float goalieX = goalie.transform.position.x;
+        float goalieY = goalie.transform.position.y;
+        float puckX = transform.position.x;
+        float puckY = transform.position.y;
+
+        // prints out coordinates to the console window
+        Debug.Log($"[HITBOX CHECK] Goalie Pos: ({goalieX}, {goalieY}) | Puck Target Pos: ({puckX}, {puckY})");
+
+        bool hitX = (goalieX >= puckX - 1.2f && goalieX <= puckX + 1.2f);
+        bool hitY = (goalieY >= puckY - 1f && goalieY <= puckY + 1f);
+
+        Debug.Log($"Hit X status: {hitX} | Hit Y status: {hitY}");
+
+        if (hitX && hitY)
+        {
+            Debug.Log("SAVE REGISTERED SUCCESSFULLY!");
+            onSave.Invoke();
+        }
+        else
+        {
+            Debug.Log("GOAL! Goalie missed the puck target area.");
+        }
+
+        if (puckPrefab != null)
+        {
+            Instantiate(puckPrefab);
+        }
+
+        Destroy(gameObject);
     }
 }
