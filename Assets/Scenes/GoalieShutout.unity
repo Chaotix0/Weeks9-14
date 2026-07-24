@@ -467,6 +467,22 @@ MonoBehaviour:
   speed: 3
   maxXPosition: 2
   minXPosition: -2
+  idleHitbox:
+    width: 2.2
+    height: 2.4
+    offset: {x: 0, y: 0}
+  gloveHitbox:
+    width: 3.8
+    height: 2
+    offset: {x: -0.2, y: 0.4}
+  blockerHitbox:
+    width: 3.2
+    height: 2.2
+    offset: {x: 0.4, y: 0.2}
+  butterflyHitbox:
+    width: 4.2
+    height: 1.6
+    offset: {x: 0, y: -0.7}
 --- !u!95 &703035902
 Animator:
   serializedVersion: 7

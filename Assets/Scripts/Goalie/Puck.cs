@@ -90,36 +90,75 @@ public class Puck : MonoBehaviour
         }
     }
 
+    void LateUpdate()
+    {
+        // Only handle standard puck arrival in LateUpdate
+        if (puckTypeChance < 10)
+        {
+            if (transform.localScale.x <= 0.001f)
+            {
+                ProcessShotResult();
+            }
+        }
+    }
+
     void ProcessShotResult()
     {
-        float goalieX = goalie.transform.position.x;
-        float goalieY = goalie.transform.position.y;
-        float puckX = transform.position.x;
-        float puckY = transform.position.y;
+        Goalie goalieScript = goalie.GetComponent<Goalie>();
 
-        // prints out coordinates to the console window
-        Debug.Log($"[HITBOX CHECK] Goalie Pos: ({goalieX}, {goalieY}) | Puck Target Pos: ({puckX}, {puckY})");
+        // Get active hitbox from Goalie (or use default fallback)
+        Goalie.HitboxSize goalieBox = (goalieScript != null)
+            ? goalieScript.CurrentHitbox
+            : new Goalie.HitboxSize { width = 2.2f, height = 2.4f, offset = Vector2.zero };
 
-        bool hitX = (goalieX >= puckX - 1.2f && goalieX <= puckX + 1.2f);
-        bool hitY = (goalieY >= puckY - 1f && goalieY <= puckY + 1f);
+        // Calculate Goalie's active hitbox center location
+        Vector2 goalieCenter = (Vector2)goalie.transform.position + goalieBox.offset;
 
-        Debug.Log($"Hit X status: {hitX} | Hit Y status: {hitY}");
+        // Center-to-center distance check
+        float diffX = Mathf.Abs(goalieCenter.x - targetX);
+        float diffY = Mathf.Abs(goalieCenter.y - targetY);
+
+        // Precise pixel-match check (Puck lands inside the Goalie's active box)
+        bool hitX = diffX <= (goalieBox.width / 2f);
+        bool hitY = diffY <= (goalieBox.height / 2f);
+
+        Debug.Log($"[SHOT END] Goalie Box Size: ({goalieBox.width}, {goalieBox.height}) | X Diff: {diffX:F2} <= {goalieBox.width / 2f:F2} | Y Diff: {diffY:F2} <= {goalieBox.height / 2f:F2}");
 
         if (hitX && hitY)
         {
-            Debug.Log("SAVE REGISTERED SUCCESSFULLY!");
+            // SAVE MADE!
             onSave.Invoke();
+
+            if (puckPrefab != null)
+            {
+                Instantiate(puckPrefab);
+            }
         }
         else
         {
-            Debug.Log("GOAL! Goalie missed the puck target area.");
-        }
-
-        if (puckPrefab != null)
-        {
-            Instantiate(puckPrefab);
+            // GOAL SCORED!
+            Debug.Log($"GOAL! Missed save. X diff: {diffX:F2} (Max: {goalieBox.width / 2f}), Y diff: {diffY:F2}");
         }
 
         Destroy(gameObject);
+    }
+
+    void OnDrawGizmos()
+    {
+        // Draw the target zone box at the puck's destination
+        Gizmos.color = Color.green;
+
+        // Creates a visual box based on your hit margins (Width = 1.3 * 2, Height = 1.1 * 2)
+        Vector3 targetCenter = new Vector3(targetX, targetY, 0);
+        Vector3 boxSize = new Vector3(1.3f * 2f, 1.1f * 2f, 0.1f);
+
+        Gizmos.DrawWireCube(targetCenter, boxSize);
+
+        // If goalie is assigned, draw a line connecting goalie to the target spot
+        if (goalie != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(goalie.transform.position, targetCenter);
+        }
     }
 }
