@@ -53,7 +53,7 @@ TextureImporter:
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
-  spriteTessellationDetail: -1
+  spriteTessellationDetail: 1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -67,7 +67,7 @@ TextureImporter:
   swizzle: 50462976
   cookieLightType: 0
   platformSettings:
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -80,7 +80,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Standalone
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -93,7 +93,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: WebGL
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -106,7 +106,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
+  - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
     resizeAlgorithm: 0
@@ -123,15 +123,95 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline: []
-    physicsShape: []
+    customData: 
+    physicsShape:
+    - - {x: 4.5492115, y: -10.01939}
+      - {x: 5.550764, y: -10.041884}
+      - {x: 5.5323734, y: -9}
+      - {x: 9.52846, y: -9}
+      - {x: 9.53237, y: -8}
+      - {x: 10.517996, y: -7.9874544}
+      - {x: 10.512402, y: -5.9936924}
+      - {x: 11.5, y: -6}
+      - {x: 11.5, y: -3}
+      - {x: 10.556919, y: -2.9960861}
+      - {x: 10.472679, y: 1.0146818}
+      - {x: 9.532303, y: 0.9625416}
+      - {x: 9.52846, y: 5.0245457}
+      - {x: 10.480694, y: 5.0307693}
+      - {x: 10.540911, y: 6.988634}
+      - {x: 11.5, y: 7}
+      - {x: 11.585077, y: 9.986763}
+      - {x: 12.5, y: 9.989517}
+      - {x: 12.5, y: 12}
+      - {x: 11.5, y: 12}
+      - {x: 11.521702, y: 10.037712}
+      - {x: 10.526197, y: 9.978323}
+      - {x: 10.5, y: 7.0323734}
+      - {x: 8.560833, y: 7.0284595}
+      - {x: 8.502829, y: 8.007336}
+      - {x: 6.494484, y: 8.013077}
+      - {x: 6.5139294, y: 9.028223}
+      - {x: 4.5576744, y: 9.0999565}
+      - {x: 4.5, y: 10}
+      - {x: 2.5, y: 10}
+      - {x: 2.5, y: 11}
+      - {x: -0.5, y: 11}
+      - {x: -0.5, y: 10}
+      - {x: -3.5, y: 10}
+      - {x: -3.4783182, y: 9.071278}
+      - {x: -5.468493, y: 8.979015}
+      - {x: -5.4639187, y: 8.040642}
+      - {x: -7.446972, y: 7.9990826}
+      - {x: -7.503913, y: 6.9715405}
+      - {x: -11.5, y: 7}
+      - {x: -11.5, y: 3}
+      - {x: -9.589293, y: 3}
+      - {x: -9.5, y: 1}
+      - {x: -5.532373, y: 1.0284595}
+      - {x: -5.5, y: -0.9960871}
+      - {x: -6.538814, y: -0.98787117}
+      - {x: -6.5, y: -2}
+      - {x: -7.4946547, y: -1.9485865}
+      - {x: -7.51906, y: -2.9585361}
+      - {x: -8.48545, y: -2.9416409}
+      - {x: -8.478663, y: -3.9829216}
+      - {x: -9.477695, y: -4.009453}
+      - {x: -9.503913, y: -5}
+      - {x: -10.462208, y: -4.9840903}
+      - {x: -10.5, y: -7}
+      - {x: -9.540029, y: -6.9638844}
+      - {x: -9.503245, y: -7.9661717}
+      - {x: -8.556919, y: -7.9754534}
+      - {x: -8.5, y: -9}
+      - {x: -6.5, y: -9}
+      - {x: -6.5, y: -10}
+      - {x: -5.5, y: -10}
+      - {x: -5.5, y: -9}
+      - {x: -3.5, y: -9}
+      - {x: -3.5, y: -12}
+      - {x: 4.5, y: -12}
+    - - {x: 2.516055, y: -10.053006}
+      - {x: -3.496087, y: -9.967628}
+      - {x: -3.4676275, y: -4.975454}
+      - {x: -1.5, y: -5.0039134}
+      - {x: -1.4800797, y: -4.040876}
+      - {x: -0.46968555, y: -4.0606647}
+      - {x: -0.48092937, y: -3.0465193}
+      - {x: 3.4921741, y: -3.0284595}
+      - {x: 3.5245457, y: -4.0284595}
+      - {x: 3.5245476, y: -8.967627}
+      - {x: 2.5245457, y: -8.97154}
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 0
+    internalID: 1537655665
     vertices: []
     indices: 
     edges: []
     weights: []
     secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
     nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

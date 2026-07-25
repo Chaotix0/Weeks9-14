@@ -4,50 +4,47 @@ using UnityEngine;
 
 public class Goalie : MonoBehaviour
 {
-    [System.Serializable]
-    public struct HitboxSize
-    {
-        public float width;   // Total X width of the box
-        public float height;  // Total Y height of the box
-        public Vector2 offset; // Center shift (X, Y)
-    }
-
     [Header("Movement Settings")]
     public float speed = 3f;
     public float maxXPosition = 2f;
     public float minXPosition = -2f;
 
-    [Header("State Hitboxes (Calculated for 15x Scale)")]
-    public HitboxSize idleHitbox = new HitboxSize { width = 2.2f, height = 2.4f, offset = new Vector2(0f, 0f) };
-    public HitboxSize gloveHitbox = new HitboxSize { width = 3.8f, height = 2.0f, offset = new Vector2(0.8f, 0.4f) };
-    public HitboxSize blockerHitbox = new HitboxSize { width = 3.2f, height = 2.2f, offset = new Vector2(-0.4f, 0.2f) };
-    public HitboxSize butterflyHitbox = new HitboxSize { width = 4.2f, height = 1.6f, offset = new Vector2(0f, -0.2f) };
+    [Header("Sprites (With Custom Physics Shapes)")]
+    public Sprite idleSprite;
+    public Sprite gloveSprite;
+    public Sprite blockerSprite;
+    public Sprite butterflySprite;
 
-    public HitboxSize CurrentHitbox { get; private set; }
+    [Header("4 Polygon Colliders")]
+    public PolygonCollider2D idleCollider;
+    public PolygonCollider2D gloveCollider;
+    public PolygonCollider2D blockerCollider;
+    public PolygonCollider2D butterflyCollider;
 
+    private SpriteRenderer spriteRenderer;
     private Animator animator;
 
-    private float saveWindowTimer = 0f;
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Bake the custom physics shapes into each polygon collider at launch
+        BakeSpriteToCollider(idleSprite, idleCollider);
+        BakeSpriteToCollider(gloveSprite, gloveCollider);
+        BakeSpriteToCollider(blockerSprite, blockerCollider);
+        BakeSpriteToCollider(butterflySprite, butterflyCollider);
+    }
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        CurrentHitbox = idleHitbox; // Default starting stance
+        ResetToIdle();
     }
+
     void Update()
     {
         HandleMovement();
         HandleSaves();
-
-        // Countdown the save buffer timer
-        if (saveWindowTimer > 0)
-        {
-            saveWindowTimer -= Time.deltaTime;
-            if (saveWindowTimer <= 0)
-            {
-                CurrentHitbox = idleHitbox; // Return to idle once timer expires
-            }
-        }
     }
 
     private void HandleMovement()
@@ -65,34 +62,54 @@ public class Goalie : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             animator.SetTrigger("Glove");
-            CurrentHitbox = gloveHitbox;
-            saveWindowTimer = 0.3f; // Keeps the glove hitbox active for 0.3s
+            EnableOnlyCollider(gloveCollider);
+            if (spriteRenderer != null && gloveSprite != null) spriteRenderer.sprite = gloveSprite;
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
             animator.SetTrigger("Butterfly");
-            CurrentHitbox = butterflyHitbox;
-            saveWindowTimer = 0.3f; // Keeps butterfly active for 0.3s
+            EnableOnlyCollider(butterflyCollider);
+            if (spriteRenderer != null && butterflySprite != null) spriteRenderer.sprite = butterflySprite;
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
             animator.SetTrigger("Blocker");
-            CurrentHitbox = blockerHitbox;
-            saveWindowTimer = 0.3f; // Keeps blocker active for 0.3s
+            EnableOnlyCollider(blockerCollider);
+            if (spriteRenderer != null && blockerSprite != null) spriteRenderer.sprite = blockerSprite;
         }
     }
 
-    // Call this at the end of an animation clip via Animation Events to reset to stance
-    public void ResetToIdleHitbox()
+    private void BakeSpriteToCollider(Sprite sprite, PolygonCollider2D collider)
     {
-        CurrentHitbox = idleHitbox;
+        if (sprite == null || collider == null) return;
+
+        collider.pathCount = sprite.GetPhysicsShapeCount();
+
+        List<Vector2> path = new List<Vector2>();
+        for (int i = 0; i < collider.pathCount; i++)
+        {
+            path.Clear();
+            sprite.GetPhysicsShape(i, path);
+            collider.SetPath(i, path);
+        }
     }
 
-    private void OnDrawGizmos()
+    private void EnableOnlyCollider(PolygonCollider2D target)
     {
-        // Visualizes the currently active stance box in the Scene view
-        Gizmos.color = Color.cyan;
-        Vector3 boxCenter = (Vector2)transform.position + CurrentHitbox.offset;
-        Gizmos.DrawWireCube(boxCenter, new Vector3(CurrentHitbox.width, CurrentHitbox.height, 0.1f));
+        if (idleCollider != null) idleCollider.enabled = (target == idleCollider);
+        if (gloveCollider != null) gloveCollider.enabled = (target == gloveCollider);
+        if (blockerCollider != null) blockerCollider.enabled = (target == blockerCollider);
+        if (butterflyCollider != null) butterflyCollider.enabled = (target == butterflyCollider);
+    }
+
+    // Call this via Animation Event at the end of save clips
+    public void ResetToIdle()
+    {
+        EnableOnlyCollider(idleCollider);
+
+        if (spriteRenderer != null && idleSprite != null)
+        {
+            spriteRenderer.sprite = idleSprite;
+        }
     }
 }
