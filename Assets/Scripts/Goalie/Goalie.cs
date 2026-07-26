@@ -9,6 +9,10 @@ public class Goalie : MonoBehaviour
     public float maxXPosition = 2f;
     public float minXPosition = -2f;
 
+    [Header("Reset Timing")]
+    [Tooltip("Time in seconds before returning to Idle stance automatically.")]
+    public float saveDuration = 0.5f;
+
     [Header("Sprites (With Custom Physics Shapes)")]
     public Sprite idleSprite;
     public Sprite gloveSprite;
@@ -57,26 +61,35 @@ public class Goalie : MonoBehaviour
 
     private void HandleSaves()
     {
-        if (animator == null) return;
-
         if (Input.GetKeyDown(KeyCode.A))
         {
-            animator.SetTrigger("Glove");
-            EnableOnlyCollider(gloveCollider);
-            if (spriteRenderer != null && gloveSprite != null) spriteRenderer.sprite = gloveSprite;
+            TriggerSave(gloveCollider, gloveSprite, "Glove");
         }
         else if (Input.GetKeyDown(KeyCode.S))
         {
-            animator.SetTrigger("Butterfly");
-            EnableOnlyCollider(butterflyCollider);
-            if (spriteRenderer != null && butterflySprite != null) spriteRenderer.sprite = butterflySprite;
+            TriggerSave(butterflyCollider, butterflySprite, "Butterfly");
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            animator.SetTrigger("Blocker");
-            EnableOnlyCollider(blockerCollider);
-            if (spriteRenderer != null && blockerSprite != null) spriteRenderer.sprite = blockerSprite;
+            TriggerSave(blockerCollider, blockerSprite, "Blocker");
         }
+    }
+
+    private void TriggerSave(PolygonCollider2D targetCollider, Sprite targetSprite, string triggerName)
+    {
+        // Cancel any pending reset so rapid key presses don't reset early
+        CancelInvoke(nameof(ResetToIdle));
+
+        EnableOnlyCollider(targetCollider);
+
+        if (spriteRenderer != null && targetSprite != null)
+            spriteRenderer.sprite = targetSprite;
+
+        if (animator != null)
+            animator.SetTrigger(triggerName);
+
+        // Automatically return to Idle after 0.5s!
+        Invoke(nameof(ResetToIdle), saveDuration);
     }
 
     private void BakeSpriteToCollider(Sprite sprite, PolygonCollider2D collider)
@@ -102,9 +115,11 @@ public class Goalie : MonoBehaviour
         if (butterflyCollider != null) butterflyCollider.enabled = (target == butterflyCollider);
     }
 
-    // Call this via Animation Event at the end of save clips
+    // Resets both sprite and collider back to Idle
     public void ResetToIdle()
     {
+        CancelInvoke(nameof(ResetToIdle));
+
         EnableOnlyCollider(idleCollider);
 
         if (spriteRenderer != null && idleSprite != null)

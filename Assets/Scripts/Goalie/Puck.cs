@@ -77,10 +77,22 @@ public class Puck : MonoBehaviour
 
     void ProcessShotResult()
     {
-        // Check if shot landing point overlaps an active goalie collider
-        Collider2D hit = Physics2D.OverlapPoint(transform.position);
+        // Check ALL colliders touching the puck location
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.5f);
 
-        if (hit != null && hit.CompareTag("Goalie"))
+        bool isSave = false;
+
+        foreach (Collider2D col in hits)
+        {
+            // Ignore the puck itself or other background objects
+            if (col.gameObject != gameObject && col.CompareTag("Goalie"))
+            {
+                isSave = true;
+                break;
+            }
+        }
+
+        if (isSave)
         {
             // SAVE MADE!
             onSave.Invoke();
