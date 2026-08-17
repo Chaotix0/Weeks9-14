@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject startPanel;
     public GameObject instructionsPanel;
     public GameObject countdownPanel;
-    public Text countdownText; // If using TextMeshPro, change "Text" to "TMP_Text"
+    public TMPro.TMP_Text countdownText;
 
     [Header("Audio")]
     public AudioSource audioSource;
